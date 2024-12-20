@@ -42,7 +42,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '@radix-ui/themes': '@radix-ui/themes/dist/styles.css',
     },
   },
 });
