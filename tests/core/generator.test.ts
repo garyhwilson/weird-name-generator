@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { NameGenerator } from '../../src/core/generator';
-import { NameStyle, GenderCharacteristic } from '../../src/core/types';
-import { VALIDATION_RULES } from '../../src/core/constants';
+import { NameStyle, GenderCharacteristic, IPunctuationOptions } from '../../src/core/types';
+import { VALIDATION_RULES, PUNCTUATION_RULES } from '../../src/core/constants';
 
 describe('NameGenerator', () => {
   let generator: NameGenerator;
@@ -12,7 +12,7 @@ describe('NameGenerator', () => {
 
   test('should generate a valid name with default settings', () => {
     const result = generator.generate();
-    
+
     expect(result.name).toBeTruthy();
     expect(result.name.length).toBeGreaterThanOrEqual(2);
     expect(result.style).toBe('simple');
@@ -28,10 +28,18 @@ describe('NameGenerator', () => {
       'nordic', 'sylvan'
     ];
 
+    const options = {
+      minSyllables: 2,
+      maxSyllables: 3,
+      maxAttempts: 100  // Increase max attempts for more complex styles
+    };
+
     styles.forEach(style => {
-      const result = generator.generate(style);
+      const result = generator.generate(style, options);
       expect(result.name).toBeTruthy();
       expect(result.style).toBe(style);
+      expect(result.syllables.length).toBeGreaterThanOrEqual(options.minSyllables);
+      expect(result.syllables.length).toBeLessThanOrEqual(options.maxSyllables);
     });
   });
 
@@ -53,7 +61,7 @@ describe('NameGenerator', () => {
 
     const result = generator.generate('simple', options);
     const syllableCount = result.syllables.length;
-    
+
     expect(syllableCount).toBeGreaterThanOrEqual(options.minSyllables);
     expect(syllableCount).toBeLessThanOrEqual(options.maxSyllables);
   });
@@ -61,9 +69,9 @@ describe('NameGenerator', () => {
   test('should generate unique names in bulk', () => {
     const count = 10;
     const results = generator.bulkGenerate(count);
-    
+
     expect(results.length).toBe(count);
-    
+
     // Check uniqueness
     const names = results.map(r => r.name);
     const uniqueNames = new Set(names);
@@ -93,7 +101,6 @@ describe('NameGenerator', () => {
     const result = generator.generate();
     const name = result.name.toLowerCase();
 
-    // Test against validation rules
     VALIDATION_RULES.disallowedPatterns.forEach(pattern => {
       expect(pattern.test(name)).toBe(false);
     });
@@ -106,11 +113,87 @@ describe('NameGenerator', () => {
     };
 
     const results = generator.bulkGenerate(20, 'simple', {}, 'neutral', customRules);
-    
+
     results.forEach(result => {
       const name = result.name.toLowerCase();
       customRules.avoidConsonants.forEach(consonant => {
         expect(name.includes(consonant)).toBe(false);
+      });
+    });
+  });
+
+  // New tests for punctuation features
+  describe('Punctuation Features', () => {
+    test('should not apply punctuation when disabled', () => {
+      const punctuationOptions: IPunctuationOptions = {
+        enabled: false
+      };
+
+      const result = generator.generate('elven', {}, 'neutral', undefined, punctuationOptions);
+      // Check that no special characters are present
+      expect(result.name).toMatch(/^[a-zA-Z]+$/);
+    });
+
+    test('should respect maxPerName limit when applying punctuation', () => {
+      const punctuationOptions: IPunctuationOptions = {
+        enabled: true,
+        maxPerName: 1
+      };
+
+      const results = generator.bulkGenerate(20, 'elven', {}, 'neutral', undefined, punctuationOptions);
+
+      results.forEach(result => {
+        // Count special characters (this is a simplified check)
+        const specialCharCount = (result.name.match(/[^a-zA-Z]/g) || []).length;
+        expect(specialCharCount).toBeLessThanOrEqual(1);
+      });
+    });
+
+    test('should not apply punctuation to adjacent characters', () => {
+      const punctuationOptions: IPunctuationOptions = {
+        enabled: true,
+        maxPerName: 2
+      };
+
+      const results = generator.bulkGenerate(20, 'elven', {}, 'neutral', undefined, punctuationOptions);
+
+      results.forEach(result => {
+        // Check that no special characters are adjacent
+        expect(result.name).not.toMatch(/[^a-zA-Z][^a-zA-Z]/);
+      });
+    });
+
+    test('should only apply style-appropriate punctuation', () => {
+      const punctuationOptions = {
+        enabled: true,
+        maxPerName: 2
+      };
+
+      // Test with Nordic style which has specific punctuation rules
+      const options = {
+        minSyllables: 2,
+        maxSyllables: 3,
+        maxAttempts: 100
+      };
+
+      // Generate multiple names to increase chance of getting punctuation
+      const results = generator.bulkGenerate(10, 'nordic', options, 'neutral', undefined, punctuationOptions);
+
+      results.forEach(result => {
+        const name = result.name;
+
+        // If the name contains special characters
+        if (!/^[a-zA-Z]+$/.test(name)) {
+          // Should only contain Nordic-specific characters
+          const hasNonNordicSpecialChars = /[^a-zA-ZøæåØÆÅ]/.test(name);
+          expect(hasNonNordicSpecialChars).toBe(false);
+
+          // If there are special characters, they should be Nordic ones
+          const specialChars = name.match(/[^a-zA-Z]/g) || [];
+          specialChars.forEach(char => {
+            expect(['ø', 'æ', 'å', 'Ø', 'Æ', 'Å']).toContain(char);
+          });
+        }
       });
     });
   });

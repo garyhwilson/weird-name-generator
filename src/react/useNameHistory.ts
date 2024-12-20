@@ -58,6 +58,7 @@ export function useNameHistory({
 
   const clearHistory = useCallback(() => {
     setHistory([]);
+    setFavorites([]); // Make sure favorites are also cleared
     if (persistToStorage) {
       try {
         localStorage.removeItem(STORAGE_KEY);
@@ -66,7 +67,7 @@ export function useNameHistory({
       }
     }
   }, [persistToStorage]);
-
+  
   const removeFromHistory = useCallback((index: number) => {
     setHistory(prev => prev.filter((_, i) => i !== index));
   }, []);

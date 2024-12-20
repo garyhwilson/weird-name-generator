@@ -1,19 +1,9 @@
-/* Base styles */
 @import './styles/reset.css';
-
-/* Compositions - layout primitives */
 @import './styles/compositions/index.css';
-
-/* Utilities - single-purpose classes */
 @import './styles/utilities/index.css';
-
-/* Blocks - styled components */
 @import './styles/blocks/index.css';
-
-/* Exceptions - specific overrides */
 @import './styles/exceptions/index.css';
 
-/* Global custom properties */
 :root {
   /* Colors */
   --color-primary: #4338ca;

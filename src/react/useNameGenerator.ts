@@ -5,7 +5,8 @@ import type {
   GenderCharacteristic, 
   IGenerationOptions, 
   IGeneratorResult, 
-  ICustomRules 
+  ICustomRules,
+  IPunctuationOptions 
 } from '../core/types';
 
 export interface UseNameGeneratorOptions {
@@ -15,24 +16,21 @@ export interface UseNameGeneratorOptions {
   defaultCustomRules?: ICustomRules;
 }
 
+export interface GenerateOptions {
+  style?: NameStyle;
+  gender?: GenderCharacteristic;
+  options?: IGenerationOptions;
+  customRules?: ICustomRules;
+  punctuationOptions?: IPunctuationOptions;
+}
+
 export interface UseNameGeneratorResult {
-  generate: (options?: {
-    style?: NameStyle;
-    gender?: GenderCharacteristic;
-    options?: IGenerationOptions;
-    customRules?: ICustomRules;
-  }) => Promise<IGeneratorResult>;
-  bulkGenerate: (count: number, options?: {
-    style?: NameStyle;
-    gender?: GenderCharacteristic;
-    options?: IGenerationOptions;
-    customRules?: ICustomRules;
-  }) => Promise<IGeneratorResult[]>;
+  generate: (options?: GenerateOptions) => Promise<IGeneratorResult>;
+  bulkGenerate: (count: number, options?: GenerateOptions) => Promise<IGeneratorResult[]>;
   result: IGeneratorResult | null;
   history: IGeneratorResult[];
   loading: boolean;
   error: Error | null;
-  clearHistory: () => void;
 }
 
 export function useNameGenerator({
@@ -50,14 +48,21 @@ export function useNameGenerator({
     style = defaultStyle,
     gender = defaultGender,
     options = defaultOptions,
-    customRules = defaultCustomRules
-  } = {}) => {
+    customRules = defaultCustomRules,
+    punctuationOptions = { enabled: false }
+  }: GenerateOptions = {}) => {
     setLoading(true);
     setResult(null);
     setError(null);
     
     try {
-      const newResult = generator.current.generate(style, options, gender, customRules);
+      const newResult = generator.current.generate(
+        style, 
+        options, 
+        gender, 
+        customRules,
+        punctuationOptions
+      );
       setResult(newResult);
       return newResult;
     } catch (err) {
@@ -75,14 +80,22 @@ export function useNameGenerator({
       style = defaultStyle,
       gender = defaultGender,
       options = defaultOptions,
-      customRules = defaultCustomRules
-    } = {}
+      customRules = defaultCustomRules,
+      punctuationOptions = { enabled: false }
+    }: GenerateOptions = {}
   ) => {
     setLoading(true);
     setError(null);
     
     try {
-      const results = generator.current.bulkGenerate(count, style, options, gender, customRules);
+      const results = generator.current.bulkGenerate(
+        count, 
+        style, 
+        options, 
+        gender, 
+        customRules,
+        punctuationOptions
+      );
       return results;
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to generate names');
@@ -93,10 +106,6 @@ export function useNameGenerator({
     }
   }, [defaultStyle, defaultGender, defaultOptions, defaultCustomRules]);
 
-  const clearHistory = useCallback(() => {
-    generator.current.clearHistory();
-  }, []);
-
   return {
     generate,
     bulkGenerate,
@@ -104,6 +113,5 @@ export function useNameGenerator({
     history: generator.current.getHistory(),
     loading,
     error,
-    clearHistory
   };
 }

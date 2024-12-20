@@ -1,3 +1,150 @@
+import { NameStyle, PunctuationRule } from "./types";
+
+export const PUNCTUATION_RULES: Record<NameStyle, PunctuationRule[]> = {
+  elven: [
+    {
+      type: 'acute',
+      probability: 0.3,
+      allowedPositions: ['start', 'middle'],
+      allowedCharacters: ['e', 'a', 'i', 'o', 'u'],
+      style: ['elven']
+    },
+    {
+      type: 'umlaut',
+      probability: 0.2,
+      allowedPositions: ['start', 'middle'],
+      allowedCharacters: ['e', 'a', 'o'],
+      style: ['elven']
+    }
+  ],
+  nordic: [
+    {
+      type: 'slashed-o',
+      probability: 0.25,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['o'],
+      style: ['nordic']
+    },
+    {
+      type: 'ring',
+      probability: 0.25,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['a'],
+      style: ['nordic']
+    },
+    {
+      type: 'ash',
+      probability: 0.2,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['ae'],
+      style: ['nordic']
+    }
+  ],
+  draconic: [
+    {
+      type: 'circumflex',
+      probability: 0.2,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['e', 'a', 'o'],
+      style: ['draconic']
+    },
+    {
+      type: 'grave',
+      probability: 0.2,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['a', 'e', 'u'],
+      style: ['draconic']
+    }
+  ],
+  fae: [
+    {
+      type: 'apostrophe',
+      probability: 0.3,
+      allowedPositions: ['middle'],
+      style: ['fae']
+    },
+    {
+      type: 'umlaut',
+      probability: 0.2,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['e', 'a', 'i'],
+      style: ['fae']
+    }
+  ],
+  celestial: [
+    {
+      type: 'acute',
+      probability: 0.25,
+      allowedPositions: ['start', 'middle'],
+      allowedCharacters: ['e', 'a', 'i', 'o'],
+      style: ['celestial']
+    },
+    {
+      type: 'circumflex',
+      probability: 0.2,
+      allowedPositions: ['middle'],
+      allowedCharacters: ['e', 'a'],
+      style: ['celestial']
+    }
+  ],
+  // Other styles have empty arrays as they don't typically use special characters
+  simple: [],
+  dwarf: [],
+  mythical: [],
+  coastal: [],
+  desert: [],
+  sylvan: [],
+  orcish: []
+};
+
+export const PUNCTUATION_MAP = {
+  grave: {
+    a: 'à',
+    e: 'è',
+    i: 'ì',
+    o: 'ò',
+    u: 'ù'
+  },
+  acute: {
+    a: 'á',
+    e: 'é',
+    i: 'í',
+    o: 'ó',
+    u: 'ú'
+  },
+  circumflex: {
+    a: 'â',
+    e: 'ê',
+    i: 'î',
+    o: 'ô',
+    u: 'û'
+  },
+  umlaut: {
+    a: 'ä',
+    e: 'ë',
+    i: 'ï',
+    o: 'ö',
+    u: 'ü'
+  },
+  tilde: {
+    a: 'ã',
+    n: 'ñ',
+    o: 'õ'
+  },
+  ash: {
+    ae: 'æ'
+  },
+  'slashed-o': {
+    o: 'ø'
+  },
+  ring: {
+    a: 'å'
+  },
+  oe: {
+    oe: 'œ'
+  }
+};
+
 export const PHONETICS = {
     consonants: {
       common: {

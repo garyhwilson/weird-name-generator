@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNameGenerator, useNameHistory } from '../../src/react'
-import type { NameStyle, GenderCharacteristic, IGeneratorResult } from '../../src/core/types'
+import { GenerateOptions } from '../../src/react/useNameGenerator';
+import type { NameStyle, GenderCharacteristic, IGeneratorResult, IPunctuationOptions } from '../../src/core/types'
 import {
   Theme,
   Container,
@@ -13,6 +14,8 @@ import {
   IconButton
 } from '@radix-ui/themes'
 import { ChevronDownIcon, ChevronUpIcon, StarIcon, Cross2Icon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
+import * as Switch from '@radix-ui/react-switch';
+import * as Slider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
 
 const styles: NameStyle[] = [
@@ -29,6 +32,10 @@ export function App() {
   const [count, _setCount] = useState(5)
   const [selectedName, setSelectedName] = useState<IGeneratorResult | null>(null)
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [punctuationOptions, setPunctuationOptions] = useState<IPunctuationOptions>({
+    enabled: false,
+    maxPerName: 2
+  });
 
   const {
     generate,
@@ -51,23 +58,33 @@ export function App() {
 
   const handleGenerate = async () => {
     try {
-      const newResult = await generate()
-      setSelectedName(newResult)
-      addToHistory(newResult)
+      const options: GenerateOptions = {
+        style: selectedStyle,
+        gender: selectedGender,
+        punctuationOptions
+      };
+      const newResult = await generate(options);
+      setSelectedName(newResult);
+      addToHistory(newResult);
     } catch (err) {
       // Error handling is done by the hook
     }
-  }
+  };
 
   const handleBulkGenerate = async () => {
     try {
-      const results = await bulkGenerate(count)
-      results.forEach(addToHistory)
-      setSelectedName(results[results.length - 1])
+      const options: GenerateOptions = {
+        style: selectedStyle,
+        gender: selectedGender,
+        punctuationOptions
+      };
+      const results = await bulkGenerate(count, options);
+      results.forEach(addToHistory);
+      setSelectedName(results[results.length - 1]);
     } catch (err) {
       // Error handling is done by the hook
     }
-  }
+  };
 
   const handleNameClick = (name: IGeneratorResult) => {
     setSelectedName(name)
@@ -79,6 +96,11 @@ export function App() {
       setSelectedName(null)
     }
   }
+
+  const handleClearHistory = () => {
+    clearHistory();
+    setSelectedName(null);
+  };
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light')
@@ -109,7 +131,7 @@ export function App() {
             <Card size="2" style={{ flex: 1 }}>
               <Flex direction="column" gap="4">
                 <Box>
-                  <Text as="label" size="2" weight="bold" block>
+                  <Text as="label" size="2" weight="bold">
                     Style
                   </Text>
                   <Select.Root
@@ -148,7 +170,7 @@ export function App() {
                 </Box>
 
                 <Box>
-                  <Text as="label" size="2" weight="bold" block>
+                  <Text as="label" size="2" weight="bold">
                     Gender Characteristic
                   </Text>
                   <Select.Root
@@ -184,6 +206,52 @@ export function App() {
                       </Select.Content>
                     </Select.Portal>
                   </Select.Root>
+                </Box>
+
+                <Box>
+                  <Card size="2">
+                    <Heading size="3" mb="4">Punctuation Options</Heading>
+                    <Flex direction="column" gap="4">
+                      <Flex justify="between" align="center">
+                        <Text as="label" size="2" htmlFor="punctuation-switch">
+                          Enable Special Characters
+                        </Text>
+                        <Switch.Root
+                          id="punctuation-switch"
+                          checked={punctuationOptions.enabled}
+                          onCheckedChange={(checked) =>
+                            setPunctuationOptions(prev => ({ ...prev, enabled: checked }))
+                          }
+                          className="SwitchRoot"
+                        >
+                          <Switch.Thumb className="SwitchThumb" />
+                        </Switch.Root>
+                      </Flex>
+
+                      {punctuationOptions.enabled && (
+                        <Box>
+                          <Text as="label" size="2" mb="2">
+                            Maximum Special Characters Per Name: {punctuationOptions.maxPerName}
+                          </Text>
+                          <Slider.Root
+                            className="SliderRoot"
+                            min={1}
+                            max={4}
+                            step={1}
+                            value={[punctuationOptions.maxPerName || 2]}
+                            onValueChange={([value]) =>
+                              setPunctuationOptions(prev => ({ ...prev, maxPerName: value }))
+                            }
+                          >
+                            <Slider.Track className="SliderTrack">
+                              <Slider.Range className="SliderRange" />
+                            </Slider.Track>
+                            <Slider.Thumb className="SliderThumb" />
+                          </Slider.Root>
+                        </Box>
+                      )}
+                    </Flex>
+                  </Card>
                 </Box>
 
                 <Flex gap="3">
@@ -228,7 +296,7 @@ export function App() {
                   <Flex justify="between" align="center">
                     <Heading size="3">History</Heading>
                     <Button
-                      onClick={clearHistory}
+                      onClick={handleClearHistory}
                       variant="soft"
                       color="red"
                     >
