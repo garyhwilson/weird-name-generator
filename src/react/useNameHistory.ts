@@ -20,7 +20,7 @@ export interface UseNameHistoryResult {
 
 export function useNameHistory({
   maxHistorySize = 100,
-  persistToStorage = true
+  persistToStorage = true,
 }: UseNameHistoryOptions = {}): UseNameHistoryResult {
   const [history, setHistory] = useState<IGeneratorResult[]>(() => {
     if (persistToStorage) {
@@ -49,12 +49,15 @@ export function useNameHistory({
     }
   }, [history, persistToStorage]);
 
-  const addToHistory = useCallback((result: IGeneratorResult) => {
-    setHistory(prev => {
-      const newHistory = [result, ...prev].slice(0, maxHistorySize);
-      return newHistory;
-    });
-  }, [maxHistorySize]);
+  const addToHistory = useCallback(
+    (result: IGeneratorResult) => {
+      setHistory(prev => {
+        const newHistory = [result, ...prev].slice(0, maxHistorySize);
+        return newHistory;
+      });
+    },
+    [maxHistorySize]
+  );
 
   const clearHistory = useCallback(() => {
     setHistory([]);
@@ -67,7 +70,7 @@ export function useNameHistory({
       }
     }
   }, [persistToStorage]);
-  
+
   const removeFromHistory = useCallback((index: number) => {
     setHistory(prev => prev.filter((_, i) => i !== index));
   }, []);
@@ -76,12 +79,12 @@ export function useNameHistory({
     setHistory(prev => {
       const item = prev[index];
       if (!item) return prev;
-      
+
       setFavorites(currFavorites => {
         if (currFavorites.some(fav => fav.name === item.name)) return currFavorites;
         return [...currFavorites, item];
       });
-      
+
       return prev;
     });
   }, []);
@@ -97,6 +100,6 @@ export function useNameHistory({
     removeFromHistory,
     favoriteItem,
     unfavoriteItem,
-    favorites
+    favorites,
   };
 }

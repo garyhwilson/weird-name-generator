@@ -1,15 +1,31 @@
-import { IGeneratorResult, NameStyle, GenderCharacteristic, IGenerationOptions, ICustomRules, IStylePattern, IPunctuationOptions } from './types';
-import { STYLE_PATTERNS, GENDER_CHARACTERISTICS, STRESS_PATTERNS, PHONETICS, VALIDATION_RULES, PUNCTUATION_MAP, PUNCTUATION_RULES } from './constants';
+import {
+  IGeneratorResult,
+  NameStyle,
+  GenderCharacteristic,
+  IGenerationOptions,
+  ICustomRules,
+  IStylePattern,
+  IPunctuationOptions,
+} from './types';
+import {
+  STYLE_PATTERNS,
+  GENDER_CHARACTERISTICS,
+  STRESS_PATTERNS,
+  PHONETICS,
+  VALIDATION_RULES,
+  PUNCTUATION_MAP,
+  PUNCTUATION_RULES,
+} from './constants';
 
 export class NameGenerator {
   private history: IGeneratorResult[] = [];
-  private lastStyle: NameStyle = 'simple';  // Add explicit type here
+  private lastStyle: NameStyle = 'simple'; // Add explicit type here
 
   private getWeightedRandom(obj: Record<string, number>): string {
     const entries = Object.entries(obj);
     const total = entries.reduce((sum, [_, weight]) => sum + weight, 0);
     let random = Math.random() * total;
-    
+
     for (const [item, weight] of entries) {
       random -= weight;
       if (random <= 0) return item;
@@ -22,14 +38,16 @@ export class NameGenerator {
 
     switch (type) {
       case 'C':
-        pool = rules.consonantPreference === 'rare'
-          ? { ...PHONETICS.consonants.common, ...PHONETICS.consonants.rare }
-          : PHONETICS.consonants.common;
+        pool =
+          rules.consonantPreference === 'rare'
+            ? { ...PHONETICS.consonants.common, ...PHONETICS.consonants.rare }
+            : PHONETICS.consonants.common;
         break;
       case 'V':
-        pool = rules.vowelPreference === 'diphthongs'
-          ? { ...PHONETICS.vowels.common, ...PHONETICS.vowels.diphthongs }
-          : PHONETICS.vowels.common;
+        pool =
+          rules.vowelPreference === 'diphthongs'
+            ? { ...PHONETICS.vowels.common, ...PHONETICS.vowels.diphthongs }
+            : PHONETICS.vowels.common;
         break;
       default:
         return type.toLowerCase();
@@ -47,12 +65,15 @@ export class NameGenerator {
   }
 
   private generateSyllable(pattern: string, rules: ICustomRules & Record<string, unknown>): string {
-    return pattern.split('').map(char => {
-      if (char === 'C' && Math.random() < 0.3) {
-        return this.getWeightedRandom(PHONETICS.consonantBlends.initial);
-      }
-      return this.generatePhoneme(char, rules);
-    }).join('');
+    return pattern
+      .split('')
+      .map(char => {
+        if (char === 'C' && Math.random() < 0.3) {
+          return this.getWeightedRandom(PHONETICS.consonantBlends.initial);
+        }
+        return this.generatePhoneme(char, rules);
+      })
+      .join('');
   }
 
   private applyPunctuation(
@@ -75,9 +96,7 @@ export class NameGenerator {
     for (const pos of ['start', 'middle', 'end'] as const) {
       if (appliedCount >= maxMarks) break;
 
-      const applicableRules = styleRules.filter(rule =>
-        rule.allowedPositions.includes(pos)
-      );
+      const applicableRules = styleRules.filter(rule => rule.allowedPositions.includes(pos));
 
       for (let i = 0; i < chars.length; i++) {
         if (appliedCount >= maxMarks) break;
@@ -88,9 +107,12 @@ export class NameGenerator {
         const isStart = i === 0;
         const isEnd = i === chars.length - 1;
         const isMiddle = !isStart && !isEnd;
-        if ((pos === 'start' && !isStart) ||
+        if (
+          (pos === 'start' && !isStart) ||
           (pos === 'end' && !isEnd) ||
-          (pos === 'middle' && !isMiddle)) continue;
+          (pos === 'middle' && !isMiddle)
+        )
+          continue;
 
         for (const rule of applicableRules) {
           if (appliedCount >= maxMarks) break;
@@ -128,7 +150,7 @@ export class NameGenerator {
           }
 
           if (rule.type === 'hyphen' && isMiddle) {
-            chars.splice(i, 0, "-");
+            chars.splice(i, 0, '-');
             lastModifiedIndex = i;
             appliedCount++;
             i++; // Increment i since we inserted a new character
@@ -136,7 +158,7 @@ export class NameGenerator {
           }
           // Apply other diacritical marks
           const punctMap = PUNCTUATION_MAP[rule.type as keyof typeof PUNCTUATION_MAP];
-          if (punctMap && (char in punctMap)) {
+          if (punctMap && char in punctMap) {
             chars[i] = punctMap[char as keyof typeof punctMap];
             lastModifiedIndex = i;
             appliedCount++;
@@ -166,13 +188,14 @@ export class NameGenerator {
     if (isSingleSyllable) {
       const length = word.length;
       const rules = VALIDATION_RULES.singleSyllableRules;
-      
+
       if (length < rules.minLength || length > rules.maxLength) return false;
-      
+
       // Make pattern matching more lenient for single syllables
-      const hasValidPattern = rules.preferredPatterns.some(pattern => pattern.test(word)) ||
+      const hasValidPattern =
+        rules.preferredPatterns.some(pattern => pattern.test(word)) ||
         /^[bcdfghjklmnpqrstvwxyz]*[aeiou]+[bcdfghjklmnpqrstvwxyz]*$/i.test(word);
-      
+
       return hasValidPattern;
     }
 
@@ -193,7 +216,7 @@ export class NameGenerator {
 
     return normalizedWord.length >= 3 && normalizedWord.length <= 12;
   }
-  
+
   public generate(
     style: NameStyle = 'simple',
     options: IGenerationOptions = {},
@@ -201,7 +224,7 @@ export class NameGenerator {
     customRules?: ICustomRules,
     punctuationOptions: IPunctuationOptions = { enabled: false }
   ): IGeneratorResult {
-    this.lastStyle = style;  // Track the current style
+    this.lastStyle = style; // Track the current style
     const baseStylePattern = STYLE_PATTERNS[style];
     const genderTraits = GENDER_CHARACTERISTICS[gender];
 
@@ -209,14 +232,14 @@ export class NameGenerator {
       ...baseStylePattern,
       ...genderTraits,
       ...customRules,
-      preferredPatterns: customRules?.preferredPatterns || baseStylePattern.preferredPatterns
+      preferredPatterns: customRules?.preferredPatterns || baseStylePattern.preferredPatterns,
     } as IStylePattern & ICustomRules;
 
     const {
       minSyllables = mergedRules.minSyllables ?? 1,
       maxSyllables = mergedRules.maxSyllables ?? 3,
       forceEnding = true,
-      maxAttempts = 50
+      maxAttempts = 50,
     } = options;
 
     let attempts = 0;
@@ -235,34 +258,40 @@ export class NameGenerator {
 
       for (let i = 0; i < currentSyllableCount; i++) {
         const patternObj = this.getWeightedRandom(
-          Object.fromEntries(
-            mergedRules.preferredPatterns.map(p => [p.pattern, p.weight])
-          )
+          Object.fromEntries(mergedRules.preferredPatterns.map(p => [p.pattern, p.weight]))
         );
-        syllables.push(this.generateSyllable(patternObj, mergedRules as ICustomRules & Record<string, unknown>));
+        syllables.push(
+          this.generateSyllable(patternObj, mergedRules as ICustomRules & Record<string, unknown>)
+        );
       }
 
       const stressPreference = mergedRules.stressPreference;
-      stressPattern = (stressPreference &&
+      stressPattern =
+        stressPreference &&
         typeof stressPreference === 'object' &&
         currentSyllableCount in stressPreference &&
-        typeof stressPreference[currentSyllableCount as keyof typeof stressPreference] === 'string')
-        ? stressPreference[currentSyllableCount as keyof typeof stressPreference]
-        : this.getWeightedRandom(
-          Object.fromEntries(
-            STRESS_PATTERNS[currentSyllableCount as keyof typeof STRESS_PATTERNS]
-              .map(p => [p.pattern, p.weight])
-          )
-        );
+        typeof stressPreference[currentSyllableCount as keyof typeof stressPreference] === 'string'
+          ? stressPreference[currentSyllableCount as keyof typeof stressPreference]
+          : this.getWeightedRandom(
+              Object.fromEntries(
+                STRESS_PATTERNS[currentSyllableCount as keyof typeof STRESS_PATTERNS].map(p => [
+                  p.pattern,
+                  p.weight,
+                ])
+              )
+            );
 
       const stressedSyllables = this.applyStress(syllables, stressPattern);
 
       if (forceEnding) {
         const ending = this.getWeightedRandom(mergedRules.endings);
-        if (/[aeiou]$/i.test(stressedSyllables[stressedSyllables.length - 1]) &&
-          /^[aeiou]/i.test(ending)) {
-          stressedSyllables[stressedSyllables.length - 1] =
-            stressedSyllables[stressedSyllables.length - 1].slice(0, -1);
+        if (
+          /[aeiou]$/i.test(stressedSyllables[stressedSyllables.length - 1]) &&
+          /^[aeiou]/i.test(ending)
+        ) {
+          stressedSyllables[stressedSyllables.length - 1] = stressedSyllables[
+            stressedSyllables.length - 1
+          ].slice(0, -1);
         }
         stressedSyllables.push(ending.toLowerCase());
         syllables.push(ending);
@@ -283,7 +312,7 @@ export class NameGenerator {
       syllables,
       stress: stressPattern,
       style,
-      gender
+      gender,
     };
 
     this.history.push(result);
@@ -310,7 +339,9 @@ export class NameGenerator {
       } catch (error) {
         attempts++;
         if (attempts >= maxBulkAttempts) {
-          throw new Error(`Failed to generate ${count} unique names after ${maxBulkAttempts} attempts`);
+          throw new Error(
+            `Failed to generate ${count} unique names after ${maxBulkAttempts} attempts`
+          );
         }
       }
     }

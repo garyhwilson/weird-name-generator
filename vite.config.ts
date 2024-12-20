@@ -11,6 +11,9 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
+  optimizeDeps: {
+    include: ['@radix-ui/themes']
+  },
   build: {
     lib: {
       entry: {
@@ -25,6 +28,10 @@ export default defineConfig({
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          '@radix-ui/themes/styles.css': 'RadixUIThemesStylesCSS',
+        },
+        manualChunks: {
+          'radix-ui': ['@radix-ui/themes', '@radix-ui/react-select', '@radix-ui/react-icons']
         },
       },
     },
