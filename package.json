@@ -75,8 +75,5 @@
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "dependencies": {
-    "@radix-ui/react-select": "^2.1.4"
   }
 }
