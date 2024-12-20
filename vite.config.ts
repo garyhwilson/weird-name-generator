@@ -11,9 +11,6 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
-  optimizeDeps: {
-    include: ['@radix-ui/themes']
-  },
   build: {
     lib: {
       entry: {
@@ -23,7 +20,7 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@radix-ui/themes'],
+      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
