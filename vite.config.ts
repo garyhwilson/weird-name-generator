@@ -23,12 +23,11 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@radix-ui/themes/styles.css'],
+      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
-          '@radix-ui/themes/styles.css': 'RadixUIThemesStylesCSS',
         },
       },
     },
