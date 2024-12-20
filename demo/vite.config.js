@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [react()],
     build: {
         rollupOptions: {
-            external: [/^@radix-ui\/themes/],
+            external: [],
         },
     },
     server: {
@@ -20,10 +20,9 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, './src'),
-            '@radix-ui/themes': '@radix-ui/themes',
         },
     },
     optimizeDeps: {
-        include: ['@radix-ui/themes'],
+        include: ['@radix-ui/themes', '@radix-ui/react-icons', '@radix-ui/react-select']
     },
 });
