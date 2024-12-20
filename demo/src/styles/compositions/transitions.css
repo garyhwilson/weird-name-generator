@@ -1,0 +1,51 @@
+/* Fade transition */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(var(--space-xs));
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(var(--space-xs));
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Generator result transitions */
+.generator__result--enter {
+  opacity: 0;
+  transform: translateY(var(--space-m));
+}
+
+.generator__result--enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Loading pulse animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}

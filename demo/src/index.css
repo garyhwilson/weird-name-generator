@@ -1,0 +1,61 @@
+/* Base styles */
+@import './styles/reset.css';
+
+/* Compositions - layout primitives */
+@import './styles/compositions/index.css';
+@import './styles/compositions/transitions.css';
+
+/* Utilities - single-purpose classes */
+@import './styles/utilities/index.css';
+
+/* Blocks - styled components */
+@import './styles/blocks/index.css';
+
+/* Exceptions - specific overrides */
+@import './styles/exceptions/index.css';
+
+/* Global custom properties */
+:root {
+  /* Colors */
+  --color-primary: #4338ca;
+  --color-primary-light: #6366f1;
+  --color-secondary: #64748b;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-light: #475569;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-s: 0.5rem;
+  --space-m: 1rem;
+  --space-l: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+
+  /* Typography */
+  --font-family: system-ui, -apple-system, sans-serif;
+  --font-size-small: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-large: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+
+  /* Other */
+  --border-radius: 0.25rem;
+  --max-width: 64rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: var(--space-m);
+}
