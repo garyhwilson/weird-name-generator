@@ -26,12 +26,12 @@ export default defineConfig({
       include: [/@radix-ui\/themes/, /node_modules/]
     },
     rollupOptions: {
-      external: ['@radix-ui/themes/styles.css'],
+      external: [],
       output: {
-        globals: {
-          '@radix-ui/themes/styles.css': 'RadixUIThemesStylesCSS',
-        },
-      },
-    },
+        manualChunks: {
+          'radix-ui': ['@radix-ui/themes']
+        }
+      }
+    }
   }
 });
