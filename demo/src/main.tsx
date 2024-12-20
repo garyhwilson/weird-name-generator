@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
 
-import '@radix-ui/themes/styles.css';
+import '@radix-ui/themes/styles.css'
 import './styles/select.css'
 import './styles/controls.css'
 

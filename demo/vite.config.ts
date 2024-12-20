@@ -18,4 +18,12 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['@radix-ui/themes']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/@radix-ui\/themes/, /node_modules/]
+    }
+  }
 });
