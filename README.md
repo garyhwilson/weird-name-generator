@@ -2,6 +2,10 @@
 
 A flexible and customizable fantasy name generator with support for various styles, customizable rules, and React integration. Generate unique names for characters, places, or any other fantasy/sci-fi elements with options for different styles, gender characteristics, and special character rules.
 
+## Demo
+
+Check out the [live demo](https://weird-name-generator-demo.vercel.app) to see the generator in action. The demo source code is available in the `demo/` directory and showcases a full-featured React implementation using the generator and its hooks. For instructions on running the demo locally, see [DEMO.md](./demo/DEMO.md).
+
 ## Features
 
 - Multiple preset name styles (Elven, Draconic, Nordic, etc.)
