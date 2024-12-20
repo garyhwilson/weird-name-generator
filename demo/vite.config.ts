@@ -24,6 +24,14 @@ export default defineConfig({
   build: {
     commonjsOptions: {
       include: [/@radix-ui\/themes/, /node_modules/]
-    }
+    },
+    rollupOptions: {
+      external: ['@radix-ui/themes/styles.css'],
+      output: {
+        globals: {
+          '@radix-ui/themes/styles.css': 'RadixUIThemesStylesCSS',
+        },
+      },
+    },
   }
 });
