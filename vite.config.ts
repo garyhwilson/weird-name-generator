@@ -23,7 +23,7 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@radix-ui/themes', '@radix-ui/themes/styles.css'],
+      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
@@ -42,6 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      '@radix-ui/themes': '@radix-ui/themes/dist/styles.css',
     },
   },
 });
