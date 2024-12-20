@@ -3,7 +3,6 @@
 
 /* Compositions - layout primitives */
 @import './styles/compositions/index.css';
-@import './styles/compositions/transitions.css';
 
 /* Utilities - single-purpose classes */
 @import './styles/utilities/index.css';

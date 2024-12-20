@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNameGenerator, useNameHistory } from '../../src/react'
 import type { NameStyle, GenderCharacteristic, IGeneratorResult } from '../../src/core/types'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 const styles: NameStyle[] = [
   'simple', 'elven', 'dwarf', 'mythical', 'draconic',
@@ -50,7 +49,6 @@ export function App() {
     try {
       const results = await bulkGenerate(count)
       results.forEach(addToHistory)
-      // Select the last generated name
       setSelectedName(results[results.length - 1])
     } catch (err) {
       // Error handling is done by the hook
@@ -63,7 +61,6 @@ export function App() {
 
   const handleRemoveFromFavorites = (index: number) => {
     unfavoriteItem(index)
-    // If the removed name was selected, clear the selection
     if (selectedName && favorites[index]?.name === selectedName.name) {
       setSelectedName(null)
     }
@@ -136,22 +133,17 @@ export function App() {
             </div>
           </div>
 
-          <CSSTransition
-            in={!!selectedName}
-            timeout={300}
-            classNames="generator__result"
-            unmountOnExit
-          >
+          {selectedName && (
             <div className="generator__result">
-              <h2>{selectedName?.name}</h2>
-              <p>Style: {selectedName?.style} • Gender: {selectedName?.gender}</p>
+              <h2>{selectedName.name}</h2>
+              <p>Style: {selectedName.style} • Gender: {selectedName.gender}</p>
               <p className="generator__result-details">
-                Syllables: {selectedName?.syllables.join(' - ')}
+                Syllables: {selectedName.syllables.join(' - ')}
                 <br />
-                Stress Pattern: {selectedName?.stress}
+                Stress Pattern: {selectedName.stress}
               </p>
             </div>
-          </CSSTransition>
+          )}
         </section>
 
         <div className="stack-large">
@@ -165,14 +157,10 @@ export function App() {
                 Clear
               </button>
             </div>
-            <TransitionGroup component="ul" className="name-list">
+            <ul className="name-list">
               {history.map((item, index) => (
-                <CSSTransition
-                  key={`${item.name}-${index}`}
-                  timeout={300}
-                  classNames="fade"
-                >
-                  <li className="name-list__item">
+                <li key={`${item.name}-${index}`} className="name-list__item">
+                  <div className="name-list__content">
                     <button 
                       className="name-list__name-button"
                       onClick={() => handleNameClick(item)}
@@ -185,43 +173,37 @@ export function App() {
                     >
                       ★
                     </button>
-                  </li>
-                </CSSTransition>
+                  </div>
+                </li>
               ))}
-            </TransitionGroup>
+            </ul>
           </section>
 
           <section className="card">
             <h2 className="heading">Favorites</h2>
-            <TransitionGroup component="ul" className="name-list">
+            <ul className="name-list">
               {favorites.map((item, index) => (
-                <CSSTransition
-                  key={`${item.name}-${index}`}
-                  timeout={300}
-                  classNames="fade"
-                >
-                  <li className="name-list__item">
-                    <div className="name-list__content">
-                      <button 
-                        className="name-list__name-button"
-                        onClick={() => handleNameClick(item)}
+                <li key={`${item.name}-${index}`} className="name-list__item">
+                  <div className="name-list__content">
+                    <button 
+                      className="name-list__name-button"
+                      onClick={() => handleNameClick(item)}
+                    >
+                      {item.name}
+                    </button>
+                    <div className="name-list__actions">
+                      <button
+                        onClick={() => handleRemoveFromFavorites(index)}
+                        className="button button--icon button--danger"
+                        aria-label="Remove from favorites"
                       >
-                        {item.name}
+                        ×
                       </button>
-                      <div className="name-list__actions">
-                        <button
-                          onClick={() => handleRemoveFromFavorites(index)}
-                          className="button button--icon button--danger"
-                          aria-label="Remove from favorites"
-                        >
-                          ×
-                        </button>
-                      </div>
                     </div>
-                  </li>
-                </CSSTransition>
+                  </div>
+                </li>
               ))}
-            </TransitionGroup>
+            </ul>
           </section>
         </div>
       </main>
