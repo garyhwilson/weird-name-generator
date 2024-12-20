@@ -1,6 +1,6 @@
 # Weird Name Generator
 
-A flexible and customizable fantasy name generator with support for various styles, customizable rules, and React integration. Generate unique names for characters, places, or any other fantasy/sci-fi elements with options for different styles, gender characteristics, and special character rules.
+A flexible and customizable weird name generator with support for various styles, customizable rules, and React integration. Generate unique names for characters, places, or any other fantasy/sci-fi elements with options for different styles, gender characteristics, and special character rules.
 
 ## Demo
 
@@ -47,7 +47,7 @@ console.log(femaleName.name); // e.g., "Elowen"
 
 ### Available Styles
 
-- `simple` - Basic fantasy names
+- `simple` - Basic names
 - `elven` - Elegant, flowing names with soft sounds
 - `dwarf` - Sturdy, consonant-heavy names
 - `mythical` - Exotic, mystical-sounding names

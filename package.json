@@ -1,11 +1,12 @@
 {
   "name": "weird-name-generator",
   "version": "0.1.0",
-  "description": "A flexible fantasy name generator with support for multiple styles and React integration",
+  "description": "A flexible weird name generator with support for multiple styles and React integration",
   "author": "Gary H. Wilson",
   "license": "MIT",
   "keywords": [
     "name-generator",
+    "weird",
     "fantasy",
     "rpg",
     "generator",
