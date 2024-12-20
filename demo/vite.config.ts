@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -13,25 +12,23 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  css: {
+    modules: {
+      localsConvention: 'camelCase',
+    },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
     },
   },
-  optimizeDeps: {
-    include: ['@radix-ui/themes']
-  },
-  build: {
-    commonjsOptions: {
-      include: [/@radix-ui\/themes/, /node_modules/]
-    },
-    rollupOptions: {
-      external: [],
-      output: {
-        manualChunks: {
-          'radix-ui': ['@radix-ui/themes']
-        }
-      }
-    }
-  }
 });
