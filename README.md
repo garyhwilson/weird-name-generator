@@ -4,7 +4,7 @@ A flexible and customizable weird name generator with support for various styles
 
 ## Demo
 
-Check out the [live demo](https://weird-name-generator-demo.vercel.app) to see the generator in action. The demo source code is available in the `demo/` directory and showcases a full-featured React implementation using the generator and its hooks. For instructions on running the demo locally, see [DEMO.md](./demo/DEMO.md).
+Check out the [live demo](https://weird-name-generator-demo.vercel.app) to see the generator in action. The demo source code is available in the `demo/` directory and showcases a full-featured React implementation using the generator and its hooks. For instructions on running the demo locally, see [DEMO.md](./demo/README.md).
 
 ## Features
 
