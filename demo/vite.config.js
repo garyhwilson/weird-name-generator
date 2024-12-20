@@ -4,6 +4,11 @@ import { resolve } from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    build: {
+        rollupOptions: {
+            external: [/^@radix-ui\/themes/],
+        },
+    },
     server: {
         port: 5173,
         open: true,
