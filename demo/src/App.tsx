@@ -1,6 +1,19 @@
 import { useState } from 'react'
 import { useNameGenerator, useNameHistory } from '../../src/react'
 import type { NameStyle, GenderCharacteristic, IGeneratorResult } from '../../src/core/types'
+import {
+  Theme,
+  Container,
+  Flex,
+  Box,
+  Card,
+  Text,
+  Button,
+  Heading,
+  IconButton
+} from '@radix-ui/themes'
+import { ChevronDownIcon, ChevronUpIcon, StarIcon, Cross2Icon, MoonIcon, SunIcon } from '@radix-ui/react-icons'
+import * as Select from '@radix-ui/react-select';
 
 const styles: NameStyle[] = [
   'simple', 'elven', 'dwarf', 'mythical', 'draconic',
@@ -15,6 +28,7 @@ export function App() {
   const [selectedGender, setSelectedGender] = useState<GenderCharacteristic>('neutral')
   const [count, _setCount] = useState(5)
   const [selectedName, setSelectedName] = useState<IGeneratorResult | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   const {
     generate,
@@ -66,147 +80,211 @@ export function App() {
     }
   }
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  }
+
   return (
-    <div className="center stack-large">
-      <header className="stack">
-        <h1 className="heading">Fantasy Name Generator</h1>
-        {error && (
-          <div className="alert alert--error">
-            {error.message}
-          </div>
-        )}
-      </header>
+    <Theme appearance={theme} accentColor="violet" grayColor="slate" scaling="100%">
+      <Container size="3">
+        <Flex direction="column" gap="4" py="4">
+          <Flex justify="between" align="center">
+            <Heading size="8">Weird Name Generator</Heading>
+            <IconButton
+              variant="ghost"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+            </IconButton>
+          </Flex>
 
-      <main className="grid">
-        <section className="generator">
-          <div className="generator__controls">
-            <div className="stack">
-              <label htmlFor="style">Style</label>
-              <select
-                id="style"
-                value={selectedStyle}
-                onChange={(e) => setSelectedStyle(e.target.value as NameStyle)}
-                className="input"
-                disabled={loading}
-              >
-                {styles.map((style) => (
-                  <option key={style} value={style}>
-                    {style.charAt(0).toUpperCase() + style.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="stack">
-              <label htmlFor="gender">Gender Characteristic</label>
-              <select
-                id="gender"
-                value={selectedGender}
-                onChange={(e) => setSelectedGender(e.target.value as GenderCharacteristic)}
-                className="input"
-                disabled={loading}
-              >
-                {genders.map((gender) => (
-                  <option key={gender} value={gender}>
-                    {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="cluster">
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="button"
-              >
-                {loading ? 'Generating...' : 'Generate Name'}
-              </button>
-
-              <button
-                onClick={handleBulkGenerate}
-                disabled={loading}
-                className="button button--secondary"
-              >
-                Generate {count} Names
-              </button>
-            </div>
-          </div>
-
-          {selectedName && (
-            <div className="generator__result">
-              <h2>{selectedName.name}</h2>
-              <p>Style: {selectedName.style} • Gender: {selectedName.gender}</p>
-              <p className="generator__result-details">
-                Syllables: {selectedName.syllables.join(' - ')}
-                <br />
-                Stress Pattern: {selectedName.stress}
-              </p>
-            </div>
+          {error && (
+            <Text color="red" size="2">
+              {error.message}
+            </Text>
           )}
-        </section>
 
-        <div className="stack-large">
-          <section className="card">
-            <div className="card__header">
-              <h2 className="heading">History</h2>
-              <button
-                onClick={clearHistory}
-                className="button button--secondary"
-              >
-                Clear
-              </button>
-            </div>
-            <ul className="name-list">
-              {history.map((item, index) => (
-                <li key={`${item.name}-${index}`} className="name-list__item">
-                  <div className="name-list__content">
-                    <button 
-                      className="name-list__name-button"
-                      onClick={() => handleNameClick(item)}
-                    >
-                      {item.name}
-                    </button>
-                    <button
-                      onClick={() => favoriteItem(index)}
-                      className="button button--icon"
-                    >
-                      ★
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <Flex gap="4">
+            <Card size="2" style={{ flex: 1 }}>
+              <Flex direction="column" gap="4">
+                <Box>
+                  <Text as="label" size="2" weight="bold" block>
+                    Style
+                  </Text>
+                  <Select.Root
+                    value={selectedStyle}
+                    onValueChange={(value) => setSelectedStyle(value as NameStyle)}
+                  >
+                    <Select.Trigger className="SelectTrigger" aria-label="Style">
+                      <Select.Value placeholder="Select a style" />
+                      <Select.Icon>
+                        <ChevronDownIcon />
+                      </Select.Icon>
+                    </Select.Trigger>
 
-          <section className="card">
-            <h2 className="heading">Favorites</h2>
-            <ul className="name-list">
-              {favorites.map((item, index) => (
-                <li key={`${item.name}-${index}`} className="name-list__item">
-                  <div className="name-list__content">
-                    <button 
-                      className="name-list__name-button"
-                      onClick={() => handleNameClick(item)}
+                    <Select.Portal>
+                      <Select.Content className="SelectContent">
+                        <Select.ScrollUpButton className="SelectScrollButton">
+                          <ChevronUpIcon />
+                        </Select.ScrollUpButton>
+
+                        <Select.Viewport className="SelectViewport">
+                          {styles.map((style) => (
+                            <Select.Item key={style} value={style} className="SelectItem">
+                              <Select.ItemText>
+                                {style.charAt(0).toUpperCase() + style.slice(1)}
+                              </Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select.Viewport>
+
+                        <Select.ScrollDownButton className="SelectScrollButton">
+                          <ChevronDownIcon />
+                        </Select.ScrollDownButton>
+                      </Select.Content>
+                    </Select.Portal>
+                  </Select.Root>
+                </Box>
+
+                <Box>
+                  <Text as="label" size="2" weight="bold" block>
+                    Gender Characteristic
+                  </Text>
+                  <Select.Root
+                    value={selectedGender}
+                    onValueChange={(value) => setSelectedGender(value as GenderCharacteristic)}
+                  >
+                    <Select.Trigger className="SelectTrigger" aria-label="Gender">
+                      <Select.Value placeholder="Select a gender" />
+                      <Select.Icon>
+                        <ChevronDownIcon />
+                      </Select.Icon>
+                    </Select.Trigger>
+
+                    <Select.Portal>
+                      <Select.Content className="SelectContent">
+                        <Select.ScrollUpButton className="SelectScrollButton">
+                          <ChevronUpIcon />
+                        </Select.ScrollUpButton>
+
+                        <Select.Viewport className="SelectViewport">
+                          {genders.map((gender) => (
+                            <Select.Item key={gender} value={gender} className="SelectItem">
+                              <Select.ItemText>
+                                {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                              </Select.ItemText>
+                            </Select.Item>
+                          ))}
+                        </Select.Viewport>
+
+                        <Select.ScrollDownButton className="SelectScrollButton">
+                          <ChevronDownIcon />
+                        </Select.ScrollDownButton>
+                      </Select.Content>
+                    </Select.Portal>
+                  </Select.Root>
+                </Box>
+
+                <Flex gap="3">
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                  >
+                    {loading ? 'Generating...' : 'Generate Name'}
+                  </Button>
+
+                  <Button
+                    onClick={handleBulkGenerate}
+                    disabled={loading}
+                    variant="soft"
+                  >
+                    Generate {count} Names
+                  </Button>
+                </Flex>
+
+                {selectedName && (
+                  <Card variant="classic">
+                    <Flex direction="column" gap="2">
+                      <Heading size="4">{selectedName.name}</Heading>
+                      <Text size="2" color="gray">
+                        Style: {selectedName.style} • Gender: {selectedName.gender}
+                      </Text>
+                      <Text size="2" color="gray">
+                        Syllables: {selectedName.syllables.join(' - ')}
+                      </Text>
+                      <Text size="2" color="gray">
+                        Stress Pattern: {selectedName.stress}
+                      </Text>
+                    </Flex>
+                  </Card>
+                )}
+              </Flex>
+            </Card>
+
+            <Flex direction="column" gap="4" style={{ flex: 1 }}>
+              <Card size="2">
+                <Flex direction="column" gap="3">
+                  <Flex justify="between" align="center">
+                    <Heading size="3">History</Heading>
+                    <Button
+                      onClick={clearHistory}
+                      variant="soft"
+                      color="red"
                     >
-                      {item.name}
-                    </button>
-                    <div className="name-list__actions">
-                      <button
-                        onClick={() => handleRemoveFromFavorites(index)}
-                        className="button button--icon button--danger"
-                        aria-label="Remove from favorites"
+                      Clear
+                    </Button>
+                  </Flex>
+
+                  {history.map((item, index) => (
+                    <Flex key={`${item.name}-${index}`} justify="between" align="center">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleNameClick(item)}
                       >
-                        ×
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-      </main>
-    </div>
+                        {item.name}
+                      </Button>
+                      <IconButton
+                        variant="ghost"
+                        onClick={() => favoriteItem(index)}
+                        aria-label="Add to favorites"
+                      >
+                        <StarIcon />
+                      </IconButton>
+                    </Flex>
+                  ))}
+                </Flex>
+              </Card>
+
+              <Card size="2">
+                <Flex direction="column" gap="3">
+                  <Heading size="3">Favorites</Heading>
+                  {favorites.map((item, index) => (
+                    <Flex key={`${item.name}-${index}`} justify="between" align="center">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleNameClick(item)}
+                      >
+                        {item.name}
+                      </Button>
+                      <Flex gap="2" align="center">
+                        <IconButton
+                          variant="ghost"
+                          color="red"
+                          onClick={() => handleRemoveFromFavorites(index)}
+                          aria-label="Remove from favorites"
+                        >
+                          <Cross2Icon />
+                        </IconButton>
+                      </Flex>
+                    </Flex>
+                  ))}
+                </Flex>
+              </Card>
+            </Flex>
+          </Flex>
+        </Flex>
+      </Container>
+    </Theme>
   )
 }
